@@ -1,0 +1,201 @@
+body{
+    font-family: sans-serif;
+    font-size:16px;
+    color:#292f33;
+    background:white;
+}
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width: 15em;
+    background:#444b5d;
+    padding:1em 0.5em;
+}
+.columns{
+    position:absolute;
+    top:0;
+    left: 16em;
+    right:0;
+    bottom:0;
+    background:#ddd;
+}
+.columns .column{
+    width:17em;
+    float:left;
+    margin:0.5em;
+    background:white;
+    overflow:hidden;
+    border-radius:4px;
+    height:calc(100% - 1em);
+}
+
+.column .header{padding:0.5em;}
+
+.column .header{
+    background:#e1e8ed;
+    position:relative;
+}
+
+.column .statuses{
+    display:block;
+    overflow-y:auto;
+    overflow-x:hidden;
+    width:100%;
+    height:calc(100% - 2em);
+}
+
+/* a status */
+.status{
+    font-size:0.9em;
+    position: relative;
+    border-bottom:1px solid #ddd;
+    padding:0.5em;
+    padding-left:4em;
+    padding-right:0.5em;
+}
+.status .avatar{
+    position:absolute;
+    left:0.5em;
+    top:0.5em;
+    width:3em;
+    height:3em;
+    border-radius:4px;
+}
+.status .user{
+    display:flex;
+    white-space: nowrap;
+    margin-bottom:0.25em;
+}
+.status .name{
+    font-weight:bold;
+    padding-right:0.25em;
+    white-space: nowrap;
+}
+.status .username{
+    text-overflow: ellipsis;
+    font-size:0.9em;
+    color:#888;
+}
+.status .username:before{
+    content:'@';
+}
+.status time{
+    overflow:hidden;
+    text-align:right;
+    max-width:1.5em;
+}
+.status p{
+    margin:0 0 0.25em;
+    word-wrap: break-word;
+}
+.status .tools button{
+  margin:0;
+  padding:0;
+  background:transparent;
+  border:none;
+  color:#888;
+  display:inline-block;
+  margin-right:0.25em;
+  font-weight: bold;
+  font-size:1.1em;
+  width:1.1em;
+  text-align:center;
+  line-height:1.1em;
+  cursor:pointer;
+}
+.status .tools button:hover,
+.status .tools button:focus{
+  color:black;
+}
+.status .tools button.active{
+  color:#2588d0;
+}
+
+
+/* Accounts view */
+.card{
+    background:white;
+    border-radius:4px;
+    margin-bottom:1em;
+    position:relative;
+}
+
+.account{
+    clear:both;
+    padding:0.5em;
+    border-top:1px solid #ccc;
+    overflow:hidden;
+}
+.account:first-child{
+    border:none;
+}
+.account img{
+    width:4em;
+    height:4em;
+    float:left;
+    margin-right:.5em;
+}
+.account .username{
+    display:block;
+    font-weight:bold;
+}
+.account .instance{
+    display:block;
+    color:#888;
+    font-size:0.9em;
+    margin-bottom:0.25em;
+}
+
+
+.card-pad{
+    padding:0.5em;
+}
+
+/* buttons */
+.btn{
+    background-color: #ddd;
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    text-align: center;
+    border:none;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    padding: 0.5em 0.4em;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 100ms ease-in;
+    font-size:0.8em;
+}
+
+.btn.blue{
+    background-color: #2588d0;
+    color: #ffffff;
+    padding:0.5em;
+}
+
+a.user{
+    color:#292f33;
+    text-decoration:none;
+}
+
+/* close button */
+.close{
+    position:absolute;
+    right:0.1em;
+    top:0.1em;
+    border-radius:100%;
+    border:none;
+    background:#ddd;
+    width:1.5em;
+    height:1.5em;
+    color:black;
+    padding:0;
+}
+.close:hover,
+.close:active{
+    background:#aaa;
+}

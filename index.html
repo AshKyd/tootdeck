@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Untitled</title>
+		<meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" type="text/css" href="style/style.css">
+		<script src='http://cdn.ractivejs.org/latest/ractive.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.1.2/pouchdb.min.js'></script>
+		<script type="text/javascript" src="app/index.js" defer></script>
+		<script type="text/ractive" id="template">
+		<div class="sidebar">
+			<div class="card card-pad">
+				<button class="btn" on-click="@this.set( 'addAccount', true )">Add account</button>
+			</div>
+			<div class="accounts card">
+				{{#accounts.accounts:i}}
+				<div class="account">
+					<div class="user">
+						<img alt="" src="{{user.avatar}}">
+						<span class="username">{{user.username || 'unknown'}}</span>
+						<span class="instance">{{instance}}</span>
+					</div>
+					<div class="actions">
+					  <button class="btn" on-click="@this.set('tootFromId', i)">toot</button>
+					  <button class="btn" on-click="@this.set('addColumnFromId', i)">add column</button>
+					</div>
+				</div>
+				{{/accounts.accounts}}
+			</div>
+			{{#addAccount}}
+				<div class="modal accountAdd card card-pad">
+					<button class="close" on-click="@this.set( 'addAccount', false )">x</button>
+					{{^url}}
+					<p>Enter the domain name for the instance where your acccount is set up.</p>
+					<label for="instance">Instance domain</label><input id="instance" value="{{instance}}" placeholder="mastodon.social">
+					<button on-click="getAuthUrl" class="btn blue">Log in</button>
+					{{/url}}
+					{{#url}}
+					<p>To complete login, we need an authorization code.</p>
+					<ul>
+					  <li><a target="_blank" href="{{url}}">Click the link</a> to authenticate with {{instance}}</li>
+					  <li><label for="code">Enter the code</label><input id="code" value="{{code}}"></li>
+					</ul>
+					<button on-click="getAccessToken" class="btn blue">Log in</button>
+					{{/url}}
+				</div>
+			{{/addAccount}}
+			{{#tootFromId !== null}}
+				<div class="modal statusSend card card-pad">
+					<button class="close btn" on-click="@this.set({ tootFromId: null, replyTo: null })">x</button>
+					{{#replyTo}}
+			      <div class="replyto status">
+			        <a class="user" href="{{account.url}}">
+			          <img class="avatar" alt="" src="{{account.avatar}}">
+			          <span class="name">{{account.display_name}}</span>
+			          <span class="username">{{account.username}}</span>
+			          <time datetime="created_at">{{created_at}}</time>
+			        </a>
+			        {{#spoiler_text}}
+			          <div class="spoiler">{{spoiler_text}}</div>
+			          {{#visible}}
+			            <div clas="content">{{{content}}}</div>
+			          {{else}}
+			            <div class="content">
+			              <button class="btn" on-click="@this.set('visible', true)">Show more</button>
+			            </div>
+			          {{/}}
+			        {{else}}
+			          <div clas="content">{{{content}}}</div>
+			        {{/}}
+							<div class="tools">
+								<button on-click="@this.fire('statusBoost', this, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
+								<button on-click="@this.fire('statusFavourite', this, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
+								<button on-click="@this.fire('statusReply', this, userIndex)">↰</button>
+							</div>
+			      </div>
+					{{/replyTo}}
+					<label for="toot-cw">Content warning</label>
+					<input id="toot-cw" value="{{tootCw}}">
+					<label for="toot-content">Content</label>
+					<textarea id="toot-content" value="{{tootContent}}"></textarea>
+					<button class="btn" on-click="toot" class="blue">Toot</button>
+				</div>
+			{{/}}
+			{{#addColumnFromId !== null}}
+				<div class="modal columnAdd card card-pad">
+					<button class="close btn" on-click="@this.set( 'addColumnFromId', null )">x</button>
+					{{#columns}}
+					<button class="btn" on-click="@this.fire('addColumn', { addColumnFromId, name })">{{name}}</button>
+					{{/columns}}
+				</div>
+			{{/}}
+		</div>
+
+		<div class="columns">
+		{{#columnData:i}}
+		<div class="column">
+		  <div class="header">
+		    <span class="nameColumn">{{name}}</span>
+		    <span class="nameAccount">{{user.username}}</span>
+				<button class="close btn" on-click="@this.fire('removeColumn', i)">x</button>
+		  </div>
+		  <div class="statuses">
+		    {{#data}}
+		      <div class="status">
+		        <a class="user" href="{{account.url}}">
+		          <img class="avatar" alt="" src="{{account.avatar}}">
+		          <span class="name">{{account.display_name}}</span>
+		          <span class="username">{{account.username}}</span>
+		          <time datetime="created_at">{{created_at}}</time>
+		        </a>
+		        {{#spoiler_text}}
+		          <div class="spoiler">{{spoiler_text}}</div>
+		          {{#visible}}
+		            <div clas="content">{{{content}}}</div>
+		          {{else}}
+		            <div class="content">
+		              <button class="btn" on-click="@this.set('visible', true)">Show more</button>
+		            </div>
+		          {{/}}
+		        {{else}}
+		          <div clas="content">{{{content}}}</div>
+		        {{/}}
+						<div class="tools">
+							<button on-click="@this.fire('statusBoost', this, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
+							<button on-click="@this.fire('statusFavourite', this, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
+							<button on-click="@this.set({ replyTo: this, tootFromId: userIndex })">↰</button>
+						</div>
+		      </div>
+		    {{/data}}
+		  </div>
+		</div>
+		{{/columnData}}
+		</div>
+		</script>
+	</head>
+	<body>
+		<div id="container"></div>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "tootdeck",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "beefy app/index.js:app/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "async": "^2.3.0",
+    "beefy": "^2.1.8",
+    "moment": "^2.18.1",
+    "ractive": "^0.8.12",
+    "webpack": "^2.4.1",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "dependencies": {
+    "mastodon-api": "^1.1.1"
+  }
+}
