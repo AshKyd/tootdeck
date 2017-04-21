@@ -10,6 +10,41 @@
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/pouchdb/6.1.2/pouchdb.min.js'></script>
 		<script type="text/javascript" src="app/index.js" defer></script>
 		<script type="text/ractive" id="template">
+{{#partial status}}
+	{{#if this.reblog}}
+		{{>status .reblog}}
+	{{else}}
+	<div class="status">
+		<a class="user" href="{{account.url}}">
+			<img class="avatar" alt="" src="{{resolveAvatar(account)}}">
+			<span class="name">{{account.display_name}}</span>
+			<span class="username">{{account.username}}</span>
+			<time datetime="{{created_at}}" title="{{created_at}}">{{relativeTime(created_at)}}</time>
+		</a>
+		{{#spoiler_text}}
+			<div class="spoiler">{{spoiler_text}}</div>
+			{{#visible}}
+				<div clas="content">{{{content}}}</div>
+			{{else}}
+				<div class="content">
+					<button class="btn" on-click="@this.set('visible', true)">Show more</button>
+				</div>
+			{{/}}
+		{{else}}
+			<div clas="content">{{{content}}}</div>
+		{{/}}
+		<div class="tools">
+			{{#visibility === 'public'}}
+				<button on-click="@this.fire('toggleAction', 'setBoost', this, @keypath, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
+			{{else}}
+				<span title="Status is private">🔒</span>
+			{{/}}
+			<button on-click="@this.fire('toggleAction', 'setFav', this, @keypath, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
+			<button on-click="@this.fire('tootReply', this, userIndex)">↰</button>
+		</div>
+	</div>
+	{{/if}}
+{{/partial}}
 		<div class="sidebar">
 			<div class="card card-pad">
 				<button class="btn" on-click="@this.set( 'addAccount', true )">Add account</button>
@@ -18,7 +53,7 @@
 				{{#accounts.accounts:i}}
 				<div class="account">
 					<div class="user">
-						<img alt="" src="{{user.avatar}}">
+						<img alt="" src="{{resolveAvatar(user)}}">
 						<span class="username">{{user.username || 'unknown'}}</span>
 						<span class="instance">{{instance}}</span>
 					</div>
@@ -51,27 +86,7 @@
 				<div class="modal statusSend card card-pad">
 					<button class="close btn" on-click="@this.set({ tootFromId: null, replyTo: null, cw: null })">x</button>
 					{{#replyTo}}
-						{{! FIXME: make this a partial}}
-			      <div class="replyto status">
-			        <a class="user" href="{{account.url}}">
-			          <img class="avatar" alt="" src="{{account.avatar}}">
-			          <span class="name">{{account.display_name}}</span>
-			          <span class="username">{{account.username}}</span>
-			          <time datetime="created_at">{{created_at}}</time>
-			        </a>
-			        {{#spoiler_text}}
-			          <div class="spoiler">{{spoiler_text}}</div>
-			          {{#visible}}
-			            <div clas="content">{{{content}}}</div>
-			          {{else}}
-			            <div class="content">
-			              <button class="btn" on-click="@this.set('visible', true)">Show more</button>
-			            </div>
-			          {{/}}
-			        {{else}}
-			          <div clas="content">{{{content}}}</div>
-			        {{/}}
-			      </div>
+						{{>status replyTo}}
 					{{/replyTo}}
 					<div class="tools">
 						<button class="btn {{#tootHasCw}}active{{/}}" on-click="@this.set('tootHasCw', !@this.get('tootHasCw'))" title="Apply a content warning/spoiler warning">CW</button>
@@ -105,35 +120,7 @@
 		  </div>
 		  <div class="statuses">
 		    {{#data}}
-		      <div class="status">
-		        <a class="user" href="{{account.url}}">
-		          <img class="avatar" alt="" src="{{account.avatar}}">
-		          <span class="name">{{account.display_name}}</span>
-		          <span class="username">{{account.username}}</span>
-		          <time datetime="created_at">{{created_at}}</time>
-		        </a>
-		        {{#spoiler_text}}
-		          <div class="spoiler">{{spoiler_text}}</div>
-		          {{#visible}}
-		            <div clas="content">{{{content}}}</div>
-		          {{else}}
-		            <div class="content">
-		              <button class="btn" on-click="@this.set('visible', true)">Show more</button>
-		            </div>
-		          {{/}}
-		        {{else}}
-		          <div clas="content">{{{content}}}</div>
-		        {{/}}
-						<div class="tools">
-							{{#visibility === 'public'}}
-								<button on-click="@this.fire('toggleAction', 'setBoost', this, @keypath, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
-							{{else}}
-								<span title="Status is private">🔒</span>
-							{{/}}
-							<button on-click="@this.fire('toggleAction', 'setFav', this, @keypath, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
-							<button on-click="@this.fire('tootReply', this, userIndex)">↰</button>
-						</div>
-		      </div>
+					{{> status}}
 		    {{/data}}
 		  </div>
 		</div>

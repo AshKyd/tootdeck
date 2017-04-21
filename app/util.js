@@ -1,10 +1,26 @@
+const nodeUrl = require('url');
 const util = module.exports = {
+  /**
+   * Get the avatar URL from an account
+   * @param {Object} account status.account object
+   * @return {String}        url for this user
+   */
+  resolveAvatar(account){
+    const { url, avatar } = account;
+
+    // The avatar is relative. Resolve it against the user's url
+    if(avatar.match(/^\/[^/]/)){
+      return nodeUrl.resolve(url, avatar);
+    }
+
+    return avatar;
+  },
   /**
    * Remove duplicates in an array
    * @param  {Array} array
    * @return {Array}
    */
-  arrayUnique: function(array){
+  arrayUnique(array){
     return Array.from(new Set(array));
   },
   /**
@@ -12,7 +28,7 @@ const util = module.exports = {
    * @param  {Object} object
    * @return {Object}
    */
-  stripUndefined: function(object){
+  stripUndefined(object){
     const newObject = Object.assign({}, object);
     Object.keys(newObject).forEach(key => {
       if(typeof newObject[key] === 'undefined') delete newObject[key];
@@ -24,7 +40,7 @@ const util = module.exports = {
    * @param  {String} acct username or @username
    * @return {String}      username with a starting @
    */
-  acctToMention: function(acct) {
+  acctToMention(acct) {
     if(acct.substr(0,1) === '@') return acct;
     return `@${acct}`;
   },
@@ -33,7 +49,7 @@ const util = module.exports = {
    * @param  {Object} status Mastodon API status object
    * @return {String}        String in the form of "@user1 @user2"…
    */
-  getReplyContent: function(status) {
+  getReplyContent(status) {
     let mentions = [status.account.acct];
     if(status.mentions){
       mentions.push(...status.mentions.map(m => m.acct));

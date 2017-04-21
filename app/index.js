@@ -1,3 +1,4 @@
+const relativeTime = require('./relativeTime');
 const auth = require('./auth');
 const util = require('./util');
 const Instance = require('./instance');
@@ -61,7 +62,11 @@ function refreshInstances(){
   });
 }
 refreshInstances();
-
+Ractive.defaults.data.resolveAvatar = util.resolveAvatar;
+Ractive.defaults.data.relativeTime = function(time){
+  const date = new Date(time);
+  return relativeTime(date, new Date());
+};
 var ractive = window.ractive = new Ractive({
   el: '#container',
   template: '#template',
@@ -78,6 +83,7 @@ var ractive = window.ractive = new Ractive({
       accounts: [],
     },
   },
+
 });
 
 ractive.on('addColumn', function(options){
