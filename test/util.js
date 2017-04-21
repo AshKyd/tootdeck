@@ -1,13 +1,21 @@
 const assert = require('assert');
 const util = require('../app/util');
 
-describe('arrayUnique', () =>{
+describe('arrayUnique', () => {
   it('should remove duplicates, leaving uniques', () => {
     const input = [1,2,3,4,4,4];
     const expected = [1,2,3,4];
     assert.deepEqual(
       util.arrayUnique(input),
       expected
+    );
+  });
+  it('should have no side effects', () => {
+    const input = [1,2,3,4,4,4];
+    util.arrayUnique(input);
+    assert.deepEqual(
+      input,
+      [1,2,3,4,4,4]
     );
   });
 });
@@ -18,6 +26,14 @@ describe('stripUndefined', () =>{
     assert.deepEqual(
       util.stripUndefined(input),
       expected
+    );
+  });
+  it('should have no side effects', () => {
+    const input = { a: 1, b: 2, c: undefined };
+    util.stripUndefined(input);
+    assert.deepEqual(
+      input,
+      { a: 1, b: 2, c: undefined }
     );
   });
 });
