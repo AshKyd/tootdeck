@@ -49,8 +49,9 @@
 			{{/addAccount}}
 			{{#tootFromId !== null}}
 				<div class="modal statusSend card card-pad">
-					<button class="close btn" on-click="@this.set({ tootFromId: null, replyTo: null })">x</button>
+					<button class="close btn" on-click="@this.set({ tootFromId: null, replyTo: null, cw: null })">x</button>
 					{{#replyTo}}
+						{{! FIXME: make this a partial}}
 			      <div class="replyto status">
 			        <a class="user" href="{{account.url}}">
 			          <img class="avatar" alt="" src="{{account.avatar}}">
@@ -70,15 +71,15 @@
 			        {{else}}
 			          <div clas="content">{{{content}}}</div>
 			        {{/}}
-							<div class="tools">
-								<button on-click="@this.fire('statusBoost', this, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
-								<button on-click="@this.fire('statusFavourite', this, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
-								<button on-click="@this.fire('statusReply', this, userIndex)">↰</button>
-							</div>
 			      </div>
 					{{/replyTo}}
+					<div class="tools">
+						<button class="btn {{#tootHasCw}}active{{/}}" on-click="@this.set('tootHasCw', !@this.get('tootHasCw'))" title="Apply a content warning/spoiler warning">CW</button>
+					</div>
+					{{#tootHasCw}}
 					<label for="toot-cw">Content warning</label>
 					<input id="toot-cw" value="{{tootCw}}">
+					{{/tootHasCw}}
 					<label for="toot-content">Content</label>
 					<textarea id="toot-content" value="{{tootContent}}"></textarea>
 					<button class="btn" on-click="toot" class="blue">Toot</button>
@@ -124,9 +125,13 @@
 		          <div clas="content">{{{content}}}</div>
 		        {{/}}
 						<div class="tools">
-							<button on-click="@this.fire('statusBoost', this, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
-							<button on-click="@this.fire('statusFavourite', this, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
-							<button on-click="@this.set({ replyTo: this, tootFromId: userIndex })">↰</button>
+							{{#visibility === 'public'}}
+								<button on-click="@this.fire('toggleAction', 'setBoost', this, @keypath, userIndex)" class="{{#reblogged}}active{{/}}" title="Boost from {{user.username}}">🔁</button>
+							{{else}}
+								<span title="Status is private">🔒</span>
+							{{/}}
+							<button on-click="@this.fire('toggleAction', 'setFav', this, @keypath, userIndex)" class="{{#favourited}}active{{/}}" title="Fav from {{user.username}}">★</button>
+							<button on-click="@this.fire('tootReply', this, userIndex)">↰</button>
 						</div>
 		      </div>
 		    {{/data}}

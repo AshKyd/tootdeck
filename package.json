@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/**",
     "serve": "beefy app/index.js:app/index.js"
   },
   "author": "",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "async": "^2.3.0",
     "beefy": "^2.1.8",
+    "mocha": "^3.2.0",
     "moment": "^2.18.1",
     "ractive": "^0.8.12",
     "webpack": "^2.4.1",

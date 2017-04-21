@@ -1,3 +1,4 @@
+const util = require('./util');
 const Mastodon = require('mastodon-api');
 const dbUsers = new PouchDB('users');
 const dbToots = new PouchDB('toots');
@@ -11,12 +12,15 @@ Masto.prototype.getUser = function(userId=null, callback){
   return this.m.get(`accounts/encodeURIComponent(${userId})`, callback);
 }
 Masto.prototype.toot = function(options, callback) {
-  const { tootCw, tootContent, tootNsfw } = options;
-  return this.m.post('statuses', {
+  const { tootCw, tootContent, tootNsfw, replyTo } = options;
+  const payload = util.stripUndefined({
     status: tootContent,
     spoiler_text: tootCw,
     sensitive: tootNsfw,
-  }, callback);
+    in_reply_to_id: replyTo && replyTo.id,
+  });
+  console.log(payload);
+  return this.m.post('statuses', payload, callback);
 }
 Masto.prototype.timeline = function(options, callback){
   const { timeline } = options;
@@ -35,8 +39,13 @@ Masto.prototype.processStatuses = function(statuses, callback){
   dbToots.bulkDocs(statuses).catch(() => {});
   callback(null, statuses);
 }
-Masto.prototype.boost = function(status, callback){
-  this.m.post(`statuses/${status.id}/reblog`, callback);
+Masto.prototype.setBoost = function(status, boostStatus, callback){
+  const action = boostStatus ? 'reblog' : 'unreblog';
+  this.m.post(`statuses/${status.id}/${action}`, callback);
+}
+Masto.prototype.setFav = function(status, favStatus, callback){
+  const action = favStatus ? 'favourite' : 'unfavourite';
+  this.m.post(`statuses/${status.id}/${action}`, callback);
 }
 
 module.exports = Masto;

@@ -1,4 +1,5 @@
 const auth = require('./auth');
+const util = require('./util');
 const Instance = require('./instance');
 const upsert = require('./upsert');
 const dbAccounts = new PouchDB('accounts');
@@ -110,13 +111,18 @@ ractive.on('refreshColumns', function(){
   });
 });
 
-ractive.on('statusBoost', function(status, index){
-  console.log(status, index);
+ractive.on('toggleAction', function(action, status, keyPath, index){
+  const boolName = action === 'boostStatus' ? 'reblogged' : 'favourited';
+  const boolKeyPath = `${keyPath}.${boolName}`;
   const instance = instances[index];
-  instance.boost(status, function(){
-    console.log('boosted');
+  const changedStatus = !status[boolName];
+  ractive.set(boolKeyPath, changedStatus);
+  instance[action](status, changedStatus, function(error){
+    if(error){
+      ractive.set(boolKeyPath, !changedStatus);
+      return;
+    }
   });
-
 });
 
 ractive.on('getAuthUrl', function(){
@@ -127,9 +133,14 @@ ractive.on('getAuthUrl', function(){
 });
 
 ractive.on('toot', function(){
-  const { tootFromId, tootCw, tootContent, replyTo } = ractive.get();
+  const { tootFromId, cw, tootCw, tootContent, replyTo, tootNsfw } = ractive.get();
   const instance = instances[tootFromId];
-  instance.toot({ tootCw, tootContent }, function(error, res){
+  instance.toot({
+    tootCw: cw && tootCw,
+    tootContent,
+    replyTo,
+    tootNsfw
+  }, function(error, res){
     if(error) return ractive.set('error', error);
     ractive.set({
       fromId: null,
@@ -137,6 +148,14 @@ ractive.on('toot', function(){
       tootContent: '',
       in_reply_to_id: replyTo && replyTo.id,
     })
+  });
+});
+
+ractive.on('tootReply', function(status, index){
+  ractive.set({
+    replyTo: status,
+    tootFromId: index,
+    tootContent: util.getReplyContent(status) + '',
   });
 });
 
