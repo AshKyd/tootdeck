@@ -20,15 +20,18 @@ body{
     right:0;
     bottom:0;
     background:#ddd;
+    overflow-x: auto;
+    white-space:nowrap;
 }
 .columns .column{
     width:17em;
-    float:left;
+    display:inline-block;
     margin:0.5em;
     background:white;
     overflow:hidden;
     border-radius:4px;
     height:calc(100% - 1em);
+    white-space:normal;
 }
 
 .column .header{padding:0.5em;}
@@ -72,11 +75,15 @@ body{
     font-weight:bold;
     padding-right:0.25em;
     white-space: nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden
 }
 .status .username{
     text-overflow: ellipsis;
     font-size:0.9em;
     color:#888;
+    flex-grow:1;
+    overflow:hidden;
 }
 .status .username:before{
     content:'@';
@@ -84,7 +91,6 @@ body{
 .status time{
     overflow:hidden;
     text-align:right;
-    max-width:1.5em;
 }
 .status p{
     margin:0 0 0.25em;
