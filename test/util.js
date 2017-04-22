@@ -20,8 +20,16 @@ describe('arrayUnique', () => {
   });
 });
 describe('stripUndefined', () =>{
-  it('should remote undefined values, leaving the rest', () => {
+  it('should remove undefined values, leaving the rest', () => {
     const input = { a: 1, b: 2, c: undefined };
+    const expected = { a: 1, b: 2 };
+    assert.deepEqual(
+      util.stripUndefined(input),
+      expected
+    );
+  });
+  it('should remove null values, leaving the rest', () => {
+    const input = { a: 1, b: 2, c: null };
     const expected = { a: 1, b: 2 };
     assert.deepEqual(
       util.stripUndefined(input),

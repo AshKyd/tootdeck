@@ -31,7 +31,8 @@ const util = module.exports = {
   stripUndefined(object){
     const newObject = Object.assign({}, object);
     Object.keys(newObject).forEach(key => {
-      if(typeof newObject[key] === 'undefined') delete newObject[key];
+      const value = newObject[key];
+      if(value === null || typeof value === 'undefined') delete newObject[key];
     });
     return newObject;
   },
