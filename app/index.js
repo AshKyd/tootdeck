@@ -34,10 +34,14 @@ function saveAccounts(callback){
 
 // load account data from db, then load users
 function refreshInstances(){
-  dbAccounts.get('accounts').then(accounts => {
+  dbAccounts.get('accounts')
+    .catch(error => {
+      console.warn('error loading accounts', error);
+    })
+    .then(accounts => {
+    if(!accounts) accounts = {_id: 'accounts'};
     // data migration
     if(!accounts.configuredColumns) accounts.configuredColumns = [];
-
     // let's go
     ractive.set('accounts', accounts);
     async.eachOf(

@@ -10,5 +10,5 @@ module.exports = function(db, originalDoc, callback = () => {}){
       const updatedDoc = Object.assign({}, doc, clonedDoc);
       db.put(updatedDoc).then(() => callback());
     })
-    .catch(error => callback(error));
+    .catch(error => db.put(clonedDoc).then(()=>callback));
 }
