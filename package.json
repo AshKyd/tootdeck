@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**",
-    "serve": "beefy app/index.js:app/index.js"
+    "start": "beefy app/index.js:index.js",
+    "build": "rm dist -rf;mkdir dist&&cp index.html style dist/ -r&&browserify app > dist/index.js"
   },
   "author": "",
   "license": "ISC",
